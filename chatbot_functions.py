@@ -1,6 +1,24 @@
 # chatbot_functions.py
 
 def customer_support_bot(message):
+    return "Refunds take 5–7 business days. Let me know if you need help with an order."
+
+def resume_analyzer_bot(message):
+    return "Try adding measurable achievements, action verbs, and quantified results."
+
+def document_qa_bot(message):
+    return "Please upload a PDF document. I can answer questions about its content."
+
+def medical_info_bot(message):
+    return "I provide general health information only. For medical advice, consult a professional."
+
+def immigration_bot(message):
+    return "I can explain PR, citizenship, and visa categories. What would you like to know?"
+
+
+# chatbot_functions.py
+
+def customer_support_bot(message):
     message = message.lower()
 
     if "refund" in message:

@@ -1,26 +1,21 @@
 # support_engine.py
-# Customer Support Engine using DeepSeek API (cloud-friendly)
 
-import os
+import streamlit as st
 import requests
-import json
 
 def customer_support_bot(message):
-    """
-    Customer Support Bot powered by DeepSeek.
-    Works on Streamlit Cloud (no Ollama, no SDK required).
-    """
 
-    api_key = os.getenv("DEEPSEEK_API_KEY")   # <-- FIXED
+    try:
+        api_key = st.secrets["DEEPSEEK_API_KEY"]
 
-    if not api_key:
+    except Exception:
         return (
             "⚠️ Missing DEEPSEEK_API_KEY.\n\n"
-            "Add your API key in Streamlit Cloud:\n"
-            "Settings → Secrets → Add DEEPSEEK_API_KEY"
+            "Add it in Streamlit Cloud:\n"
+            "Settings → Secrets"
         )
 
-    url = "https://api.deepseek.com/v1/chat/completions"
+    url = "https://api.deepseek.com/chat/completions"
 
     headers = {
         "Content-Type": "application/json",
@@ -34,8 +29,8 @@ def customer_support_bot(message):
                 "role": "system",
                 "content": (
                     "You are a helpful customer support assistant. "
-                    "You help users with refunds, order tracking, cancellations, "
-                    "product issues, payment problems, and general support."
+                    "Help with refunds, orders, cancellations, payments, "
+                    "and general customer support."
                 )
             },
             {
@@ -46,10 +41,19 @@ def customer_support_bot(message):
     }
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
+
         data = response.json()
+
+        if response.status_code != 200:
+            return f"❌ DeepSeek API Error:\n{data}"
 
         return data["choices"][0]["message"]["content"]
 
     except Exception as e:
-        return f"⚠️ Error communicating with DeepSeek API: {str(e)}"
+        return f"⚠️ Error communicating with DeepSeek API:\n{e}"
