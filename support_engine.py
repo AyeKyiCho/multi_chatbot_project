@@ -1,59 +1,20 @@
-# support_engine.py
-
-import streamlit as st
-import requests
-
 def customer_support_bot(message):
+    message = message.lower()
 
-    try:
-        api_key = st.secrets["DEEPSEEK_API_KEY"]
-
-    except Exception:
+    if "refund" in message:
         return (
-            "⚠️ Missing DEEPSEEK_API_KEY.\n\n"
-            "Add it in Streamlit Cloud:\n"
-            "Settings → Secrets"
+            "Refunds typically take 5–7 business days once processed. "
+            "If you already submitted a request, I can help you check its status."
         )
 
-    url = "https://api.deepseek.com/chat/completions"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
-    }
-
-    payload = {
-        "model": "deepseek-chat",
-        "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "You are a helpful customer support assistant. "
-                    "Help with refunds, orders, cancellations, payments, "
-                    "and general customer support."
-                )
-            },
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
-    }
-
-    try:
-        response = requests.post(
-            url,
-            headers=headers,
-            json=payload,
-            timeout=30
+    if "order" in message:
+        return (
+            "I can help you track your order. Please provide your order number."
         )
 
-        data = response.json()
+    if "cancel" in message:
+        return (
+            "I can help you cancel your order. May I have your order number?"
+        )
 
-        if response.status_code != 200:
-            return f"❌ DeepSeek API Error:\n{data}"
-
-        return data["choices"][0]["message"]["content"]
-
-    except Exception as e:
-        return f"⚠️ Error communicating with DeepSeek API:\n{e}"
+    return "I can help with refunds, order tracking, cancellations, and general support."
